@@ -11,7 +11,7 @@
     PA:'Pará',PB:'Paraíba',PR:'Paraná',PE:'Pernambuco',PI:'Piauí',RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',
     RS:'Rio Grande do Sul',RO:'Rondônia',RR:'Roraima',SC:'Santa Catarina',SP:'São Paulo',SE:'Sergipe',TO:'Tocantins' };
 
-  var defaults = { cep: '', layout: 'auto', hour12: '24', theme: 'dark', loc: null, weather: null };
+  var defaults = { cep: '', layout: 'auto', hour12: '24', theme: 'dark', awake: '1', loc: null, weather: null };
   var S = load();
 
   function $(id) { return document.getElementById(id); }
@@ -41,6 +41,28 @@
     $('app').setAttribute('data-layout', l);
   }
   function applyTheme() { document.documentElement.setAttribute('data-theme', S.theme); }
+
+  // ---------- Pantalla completa / pantalla encendida ----------
+  var de = document.documentElement;
+  var reqFS = de.requestFullscreen || de.webkitRequestFullscreen || de.mozRequestFullScreen || de.msRequestFullscreen;
+  function isFS() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  function isStandalone() { return window.navigator.standalone === true || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches); }
+  function toggleFullscreen() {
+    if (isStandalone()) return 'Ya estás en pantalla completa';
+    if (!reqFS) return 'iPhone no permite pantalla completa en Safari: usa Compartir → Añadir a pantalla de inicio y ábrelo desde ahí.';
+    if (isFS()) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return ''; }
+    try { reqFS.call(de); } catch (e) {}
+    return '';
+  }
+  function applyAwake() { if (S.awake === '1') window.KeepAwake.enable(); else window.KeepAwake.disable(); }
+  function flash(msg) { setStatus(msg); if (msg) setTimeout(function () { if ($('status').textContent === msg) setStatus(''); }, 6000); }
+  $('fs').onclick = function () {
+    S.awake = '1'; save(); applyAwake();
+    var m = toggleFullscreen();
+    flash(m || 'Pantalla encendida activada');
+  };
+  $('fsBtn').onclick = function () { $('fsHint').textContent = toggleFullscreen(); };
+  if (isStandalone()) $('fsHint').textContent = 'Ya estás en pantalla completa ✔';
 
   // ---------- Reloj ----------
   var DAYS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
@@ -123,7 +145,7 @@
 
   // ---------- Configuración ----------
   function openModal() {
-    $('cep').value = S.cep; $('layout').value = S.layout; $('hour12').value = S.hour12; $('theme').value = S.theme;
+    $('cep').value = S.cep; $('layout').value = S.layout; $('hour12').value = S.hour12; $('theme').value = S.theme; $('awake').value = S.awake;
     $('err').textContent = ''; $('modal').hidden = false;
   }
   function closeModal() { $('modal').hidden = true; }
@@ -137,8 +159,8 @@
   $('form').onsubmit = function (ev) {
     ev.preventDefault();
     var cep = $('cep').value.replace(/\D/g, '');
-    S.layout = $('layout').value; S.hour12 = $('hour12').value; S.theme = $('theme').value;
-    applyLayout(); applyTheme(); tickNow();
+    S.layout = $('layout').value; S.hour12 = $('hour12').value; S.theme = $('theme').value; S.awake = $('awake').value;
+    applyLayout(); applyTheme(); applyAwake(); tickNow();
     if (cep === S.cep && S.loc) { save(); render(); return closeModal(); }
     if (cep.length !== 8) { $('err').textContent = 'El CEP debe tener 8 dígitos'; return; }
     $('err').textContent = 'Buscando…';
@@ -154,6 +176,7 @@
   window.addEventListener('resize', applyLayout);
   window.addEventListener('orientationchange', function () { setTimeout(applyLayout, 200); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) { fetchWeather(); } });
+  applyAwake();
   if (S.loc) fetchWeather(); else openModal();
   setInterval(fetchWeather, WEATHER_EVERY);
 })();

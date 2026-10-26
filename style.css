@@ -84,3 +84,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--
 .actions button:last-child{margin-right:0}
 .actions .primary{background:var(--accent);border-color:var(--accent);color:#001}
 .tip{font-size:12px;color:var(--muted);margin:12px 0 0}
+
+/* ---------- Pantalla completa / encendida ---------- */
+.gear.fs{right:48px}
+.card .wide{width:100%;margin-top:12px;font-size:16px;padding:10px;border-radius:8px;border:1px solid var(--muted);background:transparent;color:var(--fg)}
+.hint{font-size:12px;color:var(--accent);margin-top:6px;min-height:1em}
