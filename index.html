@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Mini Reloj + Clima</title>
+<meta name="description" content="Reloj y clima por CEP, pensado para celulares antiguos usados como mini pantalla.">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Reloj">
+<meta name="theme-color" content="#000000">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="app" class="app" data-layout="h">
+  <section class="clock-panel" id="clockPanel">
+    <h1 class="time" id="time">--:--</h1>
+    <div class="date" id="date">&nbsp;</div>
+    <div class="place" id="place">&nbsp;</div>
+  </section>
+
+  <section class="weather-panel" id="weatherPanel">
+    <div class="now">
+      <div class="now-icon" id="nowIcon">⏳</div>
+      <div class="now-main">
+        <div class="now-temp" id="nowTemp">--°</div>
+        <div class="now-desc" id="nowDesc">Cargando…</div>
+      </div>
+    </div>
+    <div class="details" id="details"></div>
+    <div class="hours" id="hours"></div>
+  </section>
+
+  <!-- Espacio reservado para publicidad futura (no invasivo). Ver README. -->
+  <aside id="ad-slot" class="ad-slot" hidden></aside>
+
+  <div class="status" id="status"></div>
+  <button class="gear" id="gear" aria-label="Configuración">⚙</button>
+</main>
+
+<div class="modal" id="modal" hidden>
+  <form class="card" id="form" autocomplete="off">
+    <h2>Configuración</h2>
+
+    <label for="cep">CEP (Brasil)</label>
+    <input id="cep" inputmode="numeric" maxlength="9" placeholder="01001-000">
+
+    <label for="layout">Orientación</label>
+    <select id="layout">
+      <option value="auto">Automática</option>
+      <option value="h">Horizontal</option>
+      <option value="v">Vertical</option>
+    </select>
+
+    <label for="hour12">Formato de hora</label>
+    <select id="hour12">
+      <option value="24">24 horas</option>
+      <option value="12">12 horas</option>
+    </select>
+
+    <label for="theme">Tema</label>
+    <select id="theme">
+      <option value="dark">Oscuro</option>
+      <option value="amoled">Negro puro</option>
+      <option value="light">Claro</option>
+    </select>
+
+    <div class="err" id="err"></div>
+    <div class="actions">
+      <button type="button" id="cancel">Cerrar</button>
+      <button type="submit" class="primary">Guardar</button>
+    </div>
+    <p class="tip">Tip: en Safari → Compartir → “Añadir a pantalla de inicio” para pantalla completa. En Ajustes → Pantalla → Bloqueo automático: “Nunca”.</p>
+  </form>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
